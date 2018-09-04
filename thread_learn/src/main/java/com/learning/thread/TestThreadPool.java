@@ -18,7 +18,7 @@ public class TestThreadPool {
 
     public static void main(String[] args){
         ThreadFactory threadFactory = new TestThreadFactory();
-        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(3, 3,
+        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(1, 2,
                 1, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10, false),
                 threadFactory);
         threadPool.allowCoreThreadTimeOut(true);
