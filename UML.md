@@ -2,6 +2,7 @@
 ![UML类图](/img/uml_class_struct.jpg)
 #### 类之间的关系
 * 关联关系
+
 ![UML关联关系图](/img/uml_association.jpg)
 > 用一条实线进行表示
 > 用来描述不同类对象间的结构关系；是一种静态关系，与运行状态无关。
