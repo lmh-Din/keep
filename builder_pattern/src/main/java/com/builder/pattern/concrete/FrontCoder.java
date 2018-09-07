@@ -1,6 +1,12 @@
 package com.builder.pattern.concrete;
 
+
 import com.builder.pattern.Coder;
+import com.builder.pattern.CodingWith;
+import com.builder.pattern.Programer;
+import com.builder.pattern.enums.Computer;
+import com.builder.pattern.enums.IDE;
+import com.builder.pattern.enums.Language;
 
 /**
  * @Description 前端开发
@@ -9,10 +15,31 @@ import com.builder.pattern.Coder;
  * @Date 2018/9/6 15:14
  * @Version v1.0
  */
-public class FrontCoder implements Coder {
+public class FrontCoder extends CodingWith implements Coder {
+
+    private Programer programer = new Programer();
+
+    @Override
+    public Coder withIDE(IDE ide) {
+        programer.setIdeForUse(ide.toString());
+        return this;
+    }
+
+    @Override
+    public Coder withLanguage(Language language) {
+        programer.setLanguageForUse(language.toString());
+        return this;
+    }
+
+    @Override
+    public Coder withComputer(Computer computer) {
+        programer.setPlatformForUse(computer.toString());
+        return this;
+    }
 
     @Override
     public Object code() {
-        return null;
+        String msg = programer.printProgramer();
+        return msg;
     }
 }
