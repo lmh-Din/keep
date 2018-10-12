@@ -1,10 +1,9 @@
 package com.netty.nio;
 
 import java.net.InetSocketAddress;
-import java.nio.channels.Channel;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -39,13 +38,54 @@ public class NIOServer {
                         if (serverSelector.select(1) > 0){
                             Set<SelectionKey> set = serverSelector.selectedKeys();
                             Iterator<SelectionKey> iteratorKey = set.iterator();
+                            //遍历所有连接
                             while (iteratorKey.hasNext()){
                                 SelectionKey key = iteratorKey.next();
+                                //判断当前key的通道是否可以接收一个新的连接
                                 if (key.isAcceptable()){
                                     try {
-                                        ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
+                                        SocketChannel clientChannel = ((ServerSocketChannel) key.channel()).accept();
+                                        clientChannel.configureBlocking(false);
+                                        clientChannel.register(clientSelector, SelectionKey.OP_READ);
                                     }catch (Exception e){
                                         e.printStackTrace();
+                                    }finally {
+                                        iteratorKey.remove();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true){
+                        if (clientSelector.select(1) > 0){
+                            Set<SelectionKey> set = clientSelector.selectedKeys();
+                            Iterator<SelectionKey> clientKeys = set.iterator();
+                            while (clientKeys.hasNext()){
+                                SelectionKey selectionKey = clientKeys.next();
+                                if (selectionKey.isReadable()){
+                                    try {
+                                        SocketChannel clientChannel = (SocketChannel) selectionKey.channel();
+                                        ByteBuffer buffer = ByteBuffer.allocate(1024);
+                                        clientChannel.read(buffer);
+                                        buffer.flip();
+                                        System.out.println(Charset.defaultCharset().decode(buffer).toString());
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }finally {
+                                        clientKeys.remove();
+                                        selectionKey.interestOps(SelectionKey.OP_READ);
                                     }
                                 }
                             }
