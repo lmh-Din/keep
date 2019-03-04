@@ -36,7 +36,6 @@ public class ThreadPoolExecutorTest {
             System.out.println("ThreadPool is running");
         }
         System.out.println("All Thread is terminated");
-
     }
 
 }
